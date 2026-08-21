@@ -1,0 +1,66 @@
+# Versão atualizada para adicionar interação com o usuário usando dicionário
+
+estoque = []
+id_produto = 1
+
+print("---Bem-vindo ao sistema de cadastro!---")
+
+while True:
+    nome = input("\nDigite o nome do produto: ")
+    quantidade = int(input("\nDigite a quantidade inicial do produto: "))
+    preco = float(input("\nDigite o preço unitário do produto: "))
+    
+    # Criando o dicionário do produto
+    produto = {
+        "id": id_produto,
+        "nome": nome,
+        "quantidade": quantidade,
+        "preco": preco
+    }
+    estoque.append(produto)
+    
+    id_produto += 1
+    print("\nProduto cadastrado com sucesso!")
+    
+    resposta = input("\nDeseja cadastrar outro produto? Digite 1 para 'Sim' e 2 para 'Não': ")
+    
+    if resposta == "2":
+        print("\nCadastro finalizado!")
+        break
+
+# Inicialização de variáveis acumuladoras
+
+valor_total_estoque = 0.0
+produto_mais_caro = estoque[0]
+produto_maior_volume = estoque[0]
+
+print("=== RELATÓRIO DETALHADO DO ESTOQUE CADASTRADO ===\n")
+
+# Processamento dos itens do estoque
+for produto in estoque:
+    # Cálculo do valor financeiro total do item (Preço * Quantidade)
+    subtotal_item = produto["preco"] * produto["quantidade"]
+
+    # Acumula o valor total do estoque
+    valor_total_estoque += subtotal_item
+
+    # Impressão formatada dos dados de cada produto
+    print(f"Produto: {produto['nome']:<20} | "
+          f"Preço Un.: R$ {produto['preco']:8.2f} | "
+          f"Qtd: {produto['quantidade']:3d} | "
+          f"Subtotal: R$ {subtotal_item:9.2f}")
+
+    # Verificação 1: Produto de maior preço unitário
+    if produto["preco"] > produto_mais_caro["preco"]:
+        produto_mais_caro = produto
+
+    # Verificação 2: Produto com maior quantidade armazenada
+    if produto["quantidade"] > produto_maior_volume["quantidade"]:
+        produto_maior_volume = produto
+
+print("\n" + "="*65)
+print("=== MÉTRICAS E RESULTADOS DO DESAFIO DE ESTOQUE ===")
+print("="*65)
+print(f"1. Valor Total Financeiro em Estoque: R$ {valor_total_estoque:,.2f}")
+print(f"2. Produto Mais Caro (Preço Un.):    {produto_mais_caro['nome']} (R$ {produto_mais_caro['preco']:.2f})")
+print(f"3. Maior Volume de Estoque (Qtd):    {produto_maior_volume['nome']} ({produto_maior_volume['quantidade']} unidades)")
