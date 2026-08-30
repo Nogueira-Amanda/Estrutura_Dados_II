@@ -1,0 +1,128 @@
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
+# Segunda versão, modificada para incluir cadastro do paceinte pelo usuário do sistema                                                            #
+# Através de um menu interativo, o usuário pode adicionar uma paciente de rotina, de urgencia, chamar ao atendimento, ver a fila de espera e      #
+# encerrar o espediente na clinica, terminando o programa.                                                                                        #
+# ----------------------------------------------------------------------------------------------------------------------------------------------- #
+
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class Node:
+    paciente: str
+    urgente: bool = False
+    proximo: Optional['Node'] = None
+
+
+class FilaHospital:
+    def __init__(self):
+        self.inicio: Optional[Node] = None
+        self.fim: Optional[Node] = None
+        self.total_pacientes: int = 0
+
+    def esta_vazia(self) -> bool:
+        return self.inicio is None
+
+    def adicionar(self, nome: str, urgente: bool = False):
+        novo_no = Node(paciente=nome, urgente=urgente)
+        
+        if self.esta_vazia():
+            self.inicio = novo_no
+            self.fim = novo_no
+        elif urgente:
+            if not self.inicio.urgente:
+                novo_no.proximo = self.inicio
+                self.inicio = novo_no
+            else:
+                atual = self.inicio
+                while atual.proximo and atual.proximo.urgente:
+                    atual = atual.proximo
+                novo_no.proximo = atual.proximo
+                atual.proximo = novo_no
+                if novo_no.proximo is None:
+                    self.fim = novo_no
+        else:
+            self.fim.proximo = novo_no
+            self.fim = novo_no
+
+        self.total_pacientes += 1
+        tipo = "URGÊNCIA" if urgente else "Rotina"
+        print(f"\n[+] Paciente '{nome}' ({tipo}) adicionado à fila com sucesso!")
+
+    def atender() -> Optional[str]:
+        if self.esta_vazia():
+            print("\n[-] Nenhum paciente na fila de espera.")
+            return None
+        
+        paciente_atendido = self.inicio.paciente
+        self.inicio = self.inicio.proximo
+        
+        if self.inicio is None:
+            self.fim = None
+
+        self.total_pacientes -= 1
+        print(f"\n[✓] Atendendo paciente: {paciente_atendido}")
+        return paciente_atendido
+
+    def listar_espera(self):
+        if self.esta_vazia():
+            print("\nFila de espera: [Vazia]")
+            return
+
+        atual = self.inicio
+        espera = []
+        while atual is not None:
+            tag = " (URGENTE)" if atual.urgente else ""
+            espera.append(f"{atual.paciente}{tag}")
+            atual = atual.proximo
+        
+        print("\nFila de espera atual: " + " -> ".join(espera))
+
+
+# --- INTERAÇÃO COM O USUÁRIO ---
+def menu():
+    clinica = FilaHospital()
+
+    while True:
+        print("\n====================================")
+        print("    SISTEMA DE RECEPÇÃO DA CLÍNICA   ")
+        print("====================================")
+        print("1. Cadastrar Paciente (Rotina)")
+        print("2. Cadastrar Paciente (URGÊNCIA)")
+        print("3. Chamar Próximo Paciente")
+        print("4. Ver Fila de Espera")
+        print("5. Encerrar Expediente (Sair)")
+        
+        opcao = input("\nEscolha uma opção (1-5): ").strip()
+
+        if opcao == "1":
+            nome = input("Digite o nome do paciente: ").strip()
+            if nome:
+                clinica.adicionar(nome, urgente=False)
+            else:
+                print("\n[!] Nome inválido.")
+
+        elif opcao == "2":
+            nome = input("Digite o nome do paciente de URGÊNCIA: ").strip()
+            if nome:
+                clinica.adicionar(nome, urgente=True)
+            else:
+                print("\n[!] Nome inválido.")
+
+        elif opcao == "3":
+            clinica.atender()
+
+        elif opcao == "4":
+            clinica.listar_espera()
+
+        elif opcao == "5":
+            print("\n--- Relatório Final do Dia ---")
+            clinica.listar_espera()
+            print("Expediente encerrado.")
+            break
+
+        else:
+            print("\n[!] Opção inválida. Tente novamente.")
+
+# Executa o menu interativo
+menu()
