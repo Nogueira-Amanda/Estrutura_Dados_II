@@ -1,0 +1,151 @@
+# ----------------------------------------------------------------------------------------------------------------------------------------------------- #
+# Desafio Sistema de clínica: construir um algoritmo que gere um relatório como foi o dia no hospital. Criar uma lista vazia.                           #
+# Adiconar o paciente(.append), Remover os pacientes após o atendimento (.remove), Listar a espera, por ultimo, mostrar a lista vazia.                  #
+# Desenhar a estrutura Node e Fila; implementar: codificar adiconar() e atender(); Testar: inserir, atender todos; Desafio: situação de urgência.       #
+# ----------------------------------------------------------------------------------------------------------------------------------------------------- #
+  
+def relatorio_dia_hospital():
+    print("=== RELATÓRIO DE ATENDIMENTO HOSPITALAR ===\n")
+    
+    # 1. Criar lista vazia de pacientes
+    fila_espera = []
+    print(f"Inicio do dia - Fila inicial: {fila_espera}")
+
+    # 2. Adicionar pacientes (.append)
+    pacientes_chegada = ["Carlos Silva", "Ana Souza", "Marcos Lima", "Fernanda Rocha"]
+    for paciente in pacientes_chegada:
+        fila_espera.append(paciente)
+        print(f"Paciente adicionado: {paciente}")
+
+    # 3. Listar a espera
+    print(f"\nFila de espera atual ({len(fila_espera)} pacientes): {fila_espera}\n")
+
+    # 4. Remover pacientes após atendimento (.remove)
+    print("--- Inicio dos Atendimentos ---")
+    while len(fila_espera) > 0:
+        atendido = fila_espera[0]  # Primeiro a chegar (FIFO)
+        print(f"Atendendo paciente: {atendido}")
+        fila_espera.remove(atendido)
+        print(f"Pacientes aguardando: {fila_espera}")
+
+    # 5. Mostrar a lista vazia ao final do dia
+    print(f"\nFim do expediente. Estado final da fila: {fila_espera}")
+
+relatorio_dia_hospital()
+from dataclasses import dataclass
+from typing import Optional
+
+# Estrutura do Nó (Node) contendo o dado e a referência para o próximo
+@dataclass
+class Node:
+    paciente: str
+    urgente: bool = False
+    proximo: Optional['Node'] = None
+
+
+class FilaHospital:
+    def __init__(self):
+        self.inicio: Optional[Node] = None
+        self.fim: Optional[Node] = None
+        self.total_pacientes: int = 0
+
+    def esta_vazia(self) -> bool:
+        return self.inicio is None
+
+    # Codificar adicionar() - Inserção no Fim (ou após o último urgente)
+    def adicionar(self, nome: str, urgente: bool = False):
+        novo_no = Node(paciente=nome, urgente=urgente)
+        
+        # Caso 1: Fila Vazia
+        if self.esta_vazia():
+            self.inicio = novo_no
+            self.fim = novo_no
+            self.total_pacientes += 1
+            print(f"[+] Paciente '{nome}' inserido na fila." + (" (URGÊNCIA)" if urgente else ""))
+            return
+
+        # DESAFIO: Situação de urgência
+        # Se for urgente, insere após o último paciente urgente na fila
+        if urgente:
+            # Caso a urgência deva passar na frente do primeiro nó normal
+            if not self.inicio.urgente:
+                novo_no.proximo = self.inicio
+                self.inicio = novo_no
+            else:
+                # Percorre até achar o último paciente urgente
+                atual = self.inicio
+                while atual.proximo and atual.proximo.urgente:
+                    atual = atual.proximo
+                
+                novo_no.proximo = atual.proximo
+                atual.proximo = novo_no
+                if novo_no.proximo is None:
+                    self.fim = novo_no
+        else:
+            # Inserção comum no final da fila (FIFO)
+            self.fim.proximo = novo_no
+            self.fim = novo_no
+
+        self.total_pacientes += 1
+        print(f"[+] Paciente '{nome}' inserido na fila." + (" (URGÊNCIA)" if urgente else ""))
+
+    # Codificar atender() - Remoção do Inicio
+    def atender(self) -> Optional[str]:
+        if self.esta_vazia():
+            print("[-] Nenhum paciente na fila de espera.")
+            return None
+        
+        paciente_atendido = self.inicio.paciente
+        # O ponteiro inicio passa a apontar para o próximo nó da memória
+        self.inicio = self.inicio.proximo
+        
+        # Se a fila ficou vazia, ajusta o ponteiro fim
+        if self.inicio is None:
+            self.fim = None
+
+        self.total_pacientes -= 1
+        print(f"[✓] Atendendo paciente: {paciente_atendido}")
+        return paciente_atendido
+
+    def listar_espera(self):
+        if self.esta_vazia():
+            print("Fila de espera: [Vazia]")
+            return
+
+        atual = self.inicio
+        espera = []
+        while atual is not None:
+            tag = " (Urgente)" if atual.urgente else ""
+            espera.append(f"{atual.paciente}{tag}")
+            atual = atual.proximo
+        
+        print("Fila de espera atual: " + " -> ".join(espera))
+        # --- BATERIA DE TESTES ---
+clinica = FilaHospital()
+
+print("--- 1. Inserindo Pacientes de Rotina ---")
+clinica.adicionar("João")
+clinica.adicionar("Maria")
+clinica.adicionar("Pedro")
+clinica.listar_espera()
+
+print("\n--- 2. Desafio: Adicionando Paciente em Situação de Urgência ---")
+# Urgência fura a fila regular, mas respeita a ordem de urgências anteriores
+clinica.adicionar("Dra. Beatriz (Infarto)", urgente=True)
+clinica.listar_espera()
+
+print("\n--- 3. Atendendo Pacientes Sequencialmente ---")
+clinica.atender() # Atende Beatriz (Urgência)
+clinica.atender() # Atende João
+clinica.listar_espera()
+
+print("\n--- 4. Chegada de outra urgência + Atendimento de todos ---")
+clinica.adicionar("Carla (Fratura Exposta)", urgente=True)
+clinica.listar_espera()
+
+print("\nLimpando a fila:")
+while not clinica.esta_vazia():
+    clinica.atender()
+
+print("\n--- 5. Verificação Final de Lista Vazia ---")
+clinica.listar_espera()
