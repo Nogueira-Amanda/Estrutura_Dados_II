@@ -1,0 +1,80 @@
+# -------------------------------------------------------------------------------------------------- #
+# Para resolver a triagem hospitalar respeitando as regras de negócio (Pacientes normais entram      #
+# no final da fila; Pacientes prioritários entram no começo da fila), utilizei a estrutura Fila      #
+# (FIFO / Deque) na biblioteca collections.deque.                                                    #
+# A vantagem da deque (fila de duas pontas) é a eficiêcia ao manipular ambas as extremidades.        #
+# Fluxo padrão (sem prioridade): os pacientes serão inseridos no final da fila com .apeend()         #
+# Fluxo prioritário (Protocolo de Manchester): os pacientes serão inseridos diretamente no início    #
+# da fila com .appendleft(), garantinfo que o paciente seja p próximo a ser atendido.                #
+# -------------------------------------------------------------------------------------------------- #
+
+from collections import deque
+
+class TriagemHospitalar:
+    def __init__(self):
+        self.fila_atendimento = deque()  # <-- Para a fila de duas pontas
+
+    def adicionar_paciente(self, nome, prioritario=False):
+        if prioritario:
+            # Inserindo no início da fila paciente prioritário (fura a fila)
+            self.fila_atendimento.appendleft(f"[PRIORITÁRIO] {nome}")
+            print(f"-> [!!] Paciente prioritário '{nome}' inserido no início da fila")
+        else:
+            # Inserindo no final da fila paciente normal (fluxo padrão)
+            self.fila_atendimento.append(f"[PADRÃO] {nome}")
+            print(f"-> Paciente '{nome}' inserido no final da fila.")
+
+    def chamar_proximo_paciente(self):
+        if not self.fila_atendimento:
+            print("-> Nenhum paciente aguardando na fila.")
+            return None
+        
+        # Atendendo o primeiro da fila (FIFO)
+        proximo = self.fila_atendimento.popleft()
+        print("-> Chamando para atendimento:", proximo)
+        return proximo
+
+    def exibir_fila(self):
+        pacientes = list(self.fila_atendimento)
+        print(f"\nFila atual de atendimento ({len(pacientes)} paciente(s)):")
+        for idx, p in enumerate(pacientes, 1):
+            print(f"  {idx}. {p}")
+        print()
+
+
+# --- Menu para cadastrar pacientes ---
+hospital = TriagemHospitalar()
+
+while True:
+    print("-- GERENCIAMENTO DE TRIAGEM HOSPITALAR --")
+    print("1 - Cadastrar novo paciente")
+    print("2 - Chamar próximo paciente")
+    print("3 - Sair")
+    
+    opcao = input("Escolha a opção desejada: ")
+
+    if opcao == "1":
+        nome = input("Nome do paciente: ")
+        if not nome:
+            print("O nome do paciente não pode ser vazio!")
+            continue
+
+        print("\nClassificação do Protocolo de Manchester:")
+        print(" [S] Sim - Prioritário (Emergência/Urgência)")
+        print(" [N] Não - Atendimento Padrão")
+        prioridade_resp = input("O paciente é prioritário? (S/N): ")
+        
+        prioridade = prioridade_resp == "S"
+        hospital.adicionar_paciente(nome, prioritario=prioridade)
+        hospital.exibir_fila()
+
+    elif opcao == "2":
+        hospital.chamar_proximo_paciente()
+        hospital.exibir_fila()
+
+    elif opcao == "3":
+        print("Programa encerrado com sucesso.")
+        break
+
+    else:
+        print("Opção inválida! Tente novamente.\n")
