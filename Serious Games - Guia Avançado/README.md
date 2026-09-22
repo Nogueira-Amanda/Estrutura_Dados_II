@@ -1,6 +1,6 @@
 # 🧩 Jogo Didático de HeapSort
 
-Projeto desenvolvido para a disciplina de **Estruturas de Dados II**, do curso de **Ciência da Computação**.
+Projeto desenvolvido em grupo para a disciplina de **Estruturas de Dados II**, do curso de **Ciência da Computação**.
 
 O projeto consiste em um **jogo educativo executado no terminal**, desenvolvido em Python, com o objetivo de ensinar o funcionamento do algoritmo **HeapSort** por meio da participação ativa do estudante durante as etapas de construção da `max-heap` e ordenação do vetor.
 
@@ -236,9 +236,9 @@ Documento utilizado como referência para o desenvolvimento da atividade acadêm
 ## 👥 Integrantes
 
 * Amanda de Souza Nogueira
-* Silviane Souza
-* Rodrigo Nunes
-* Liz Cristina
+* [Silviane Souza](https://github.com/Silviane-Ribeiro/Estrutura_Dados_II)
+* [Rodrigo Nunes](https://github.com/rodrigonunx-spec/Estrutura_de_Dados_II)
+* [Liz Cristina](https://github.com/RyuuBatataa/Estrutura_de_Dados_II)
 
 **Disciplina:** Estruturas de Dados II
 **Curso:** Ciência da Computação
