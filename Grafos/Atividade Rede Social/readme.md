@@ -8,7 +8,7 @@ A atividade consiste em representar uma rede social fictícia chamada **ConectaU
 
 A partir dessa representação, foram realizados cálculos e análises para compreender a estrutura da rede social, identificar usuários com maior número de conexões e explorar possibilidades de recomendação de novas amizades.
 
-O trabalho foi desenvolvido em grupo, em parceria entre **Amanda Nogueira** e **Silviane Souza**.
+O trabalho foi desenvolvido em grupo, em parceria entre **Amanda Nogueira** e **[Silviane Souza](https://github.com/Silviane-Ribeiro/Estrutura_Dados_II/tree/main/Grafos/Rede%20Social).**
 
 ## 🎯 Objetivos
 
@@ -47,11 +47,11 @@ Durante o desenvolvimento da atividade, foram trabalhados os seguintes conceitos
 ```text
 grafo/
 │
-├── README.md
-│
 ├── Rede_Social.ipyng
 │
-└── Atividade_Resposta_Caderno do Estudante - grafos.pdf
+├── Atividade_Resposta_Caderno do Estudante - grafos.pdf
+│
+└── readme.md
 ```
 
 ## 📈 Desenvolvimento da atividade
@@ -160,7 +160,7 @@ Documento com as respostas, tabelas, cálculos e representações gráficas dese
 
 Amanda de Souza Nogueira
 
-Silviane Souza
+[Silviane Souza](https://github.com/Silviane-Ribeiro/Estrutura_Dados_II/tree/main/Grafos/Rede%20Social).
 
 📚 Considerações finais
 
